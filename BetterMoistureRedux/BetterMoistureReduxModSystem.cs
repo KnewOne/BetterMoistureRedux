@@ -8,40 +8,28 @@ public class BetterMoistureReduxModSystem : ModSystem {
 	public static ILogger Logger { get; private set; }
 	public static ICoreAPI Api { get; private set; }
 	public static Harmony harmony { get; private set; }
-	public static ModConfig config;
-
-	public override void StartPre(ICoreAPI api) {
-		try {
-			config = api.LoadModConfig<ModConfig>(ModConfig.ConfigName);
-			if (config == null) {
-				config = new ModConfig();
-				Logger.VerboseDebug("[BetterMoistureRedux] Config file not found, creating a new one...");
-			}
-			api.StoreModConfig(config, ModConfig.ConfigName);
-		} catch (Exception e) {
-			Logger.Error("[BetterMoistureRedux] Failed to load config, you probably made a typo: {0}", e);
-			config = new ModConfig();
-		}
-	}
-
-
 	public override void Start(ICoreAPI api) {
 		api.Logger.Debug("[BetterMoistureRedux] Start");
-		base.StartPre(api);
+		base.Start(api);
+
 		harmony = new Harmony(Mod.Info.ModID);
 		Api = api;
 		Logger = Mod.Logger;
 
+		try {
+			ModConfig.Instance = api.LoadModConfig<ModConfig>(ModConfig.ConfigName) ?? new ModConfig();
+			api.StoreModConfig(ModConfig.Instance, ModConfig.ConfigName);
+		} catch (Exception) { ModConfig.Instance = new ModConfig(); }
+
 		harmony.PatchAllUncategorized();
 
-		if (config.removeFarmlandAdjacentWaterSound) {
+		if (ModConfig.Instance.removeFarmlandAdjacentWaterSound) {
 			harmony.PatchCategory("removeFarmlandWaterSloshing");
 		}
 	}
 
 	public override void Dispose() {
 		harmony?.UnpatchAll(Mod.Info.ModID);
-		config = null;
 		harmony = null;
 		Logger = null;
 		Api = null;

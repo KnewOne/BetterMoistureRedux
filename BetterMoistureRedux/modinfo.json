@@ -2,12 +2,12 @@
   "type": "code",
   "name": "Better Moisture Redux",
   "modid": "bettermoistureredux",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Make farmland less bad again",
   "website": "https://github.com/IKnewOne/bettermoistureredux",
   "authors": [ "KnewOne", "Amzd" ],
   "side": "Server",
   "dependencies": {
-    "survival": "1.21.0"
+    "survival": "1.22.0-pre.5"
   }
 }

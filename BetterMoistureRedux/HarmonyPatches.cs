@@ -9,14 +9,14 @@ using Vintagestory.GameContent;
 
 namespace BetterMoistureRedux;
 
-[HarmonyPatch(typeof(BlockEntityFarmland), "updateMoistureLevel")]
+[HarmonyPatch(typeof(BlockEntitySoilNutrition), "updateMoistureLevel")]
 [HarmonyPatch(new Type[] { typeof(double), typeof(float), typeof(bool), typeof(ClimateCondition) })]
 public static class UpdateMoistureTranspiler {
-	public static ModConfig config = ModConfig.Instance;
+	public static ModConfig config => ModConfig.Instance;
 
 	public static float MoistureClampReplacement(float vanillaMath, float min, float max, float waterDistance) {
 		float vanillaClamped = GameMath.Clamp(vanillaMath, min, max);
-		float modClamped = BetterMoistureReduxModSystem.config.MoistureValues[GameMath.Clamp((int)waterDistance - 1, 0, config.MoistureValues.Length - 1)];
+		float modClamped = config.MoistureValues[GameMath.Clamp((int)waterDistance - 1, 0, config.MoistureValues.Length - 1)];
 
 		if (config.overwriteLowerThanVanillaValues && vanillaClamped > modClamped) {
 			return vanillaClamped;
